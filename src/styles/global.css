@@ -1,0 +1,187 @@
+/* =========================================================================
+   TeamKids V2 — "Nightfall to Dawn"
+   A cinematic, story-driven charity experience. Deep night that warms into
+   dawn as you follow one box from sky to hands. three.js + GSAP drive motion.
+   ========================================================================= */
+
+:root {
+  /* ---- The night (cold, the problem) ---- */
+  --night: #08070d;
+  --night-1: #0c0b15;
+  --night-2: #13111f;
+  --night-3: #1b1828;
+  --line: rgba(255, 255, 255, 0.09);
+
+  /* ---- The warmth (hope, the brand) ---- */
+  --amber: #f2922e;
+  --amber-600: #e07d18;
+  --amber-soft: #ffb867;
+  --gold: #ffd9a0;
+  --ember: #ff6b3d;
+  --cool: #6fb7d8;
+
+  /* ---- Text ---- */
+  --text: #f4efe7;
+  --text-2: #b9b2a8;
+  --text-3: #7e786f;
+
+  /* ---- Type ---- */
+  --display: 'Fraunces', 'Times New Roman', serif;
+  --body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ---- Layout ---- */
+  --maxw: 1240px;
+  --gutter: clamp(20px, 5vw, 64px);
+  --radius: 16px;
+  --radius-lg: 26px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --shadow-amber: 0 18px 50px rgba(242, 146, 46, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: clamp(16px, 1.05vw, 18px);
+  line-height: 1.65;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* clip (not hidden) so it doesn't create a scroll container that would
+     break the sticky globe in GlobeStage */
+  overflow-x: clip;
+}
+
+/* film grain — barely-there texture so dark fields never look flat/banded */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 500;
+  line-height: 1.02;
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+p { margin: 0 0 1rem; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--amber); color: #1a0f04; }
+
+:focus-visible {
+  outline: 2px solid var(--amber-soft);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+/* ---------- Layout ---------- */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); width: 100%; }
+.section { position: relative; padding: clamp(88px, 14vh, 200px) 0; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--amber-soft);
+  margin: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber));
+  flex: 0 0 28px;
+}
+
+.text-amber {
+  background: linear-gradient(105deg, var(--gold), var(--amber) 45%, var(--ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-dim { color: var(--text-2); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1;
+  padding: 17px 30px;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  will-change: transform;
+}
+.btn--primary {
+  background: linear-gradient(135deg, var(--amber-soft), var(--amber) 55%, var(--amber-600));
+  color: #1c1003;
+  box-shadow: var(--shadow-amber);
+}
+.btn--primary:hover { transform: translateY(-3px); box-shadow: 0 24px 60px rgba(242, 146, 46, 0.5); }
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+}
+.btn--ghost:hover { border-color: var(--text); transform: translateY(-3px); }
+
+/* ---------- a11y ---------- */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* Guard against FOUC: elements GSAP will reveal start hidden, but only when JS
+   is driving (class added on <html> by the app). */
+.js [data-reveal] { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .js [data-reveal] { opacity: 1 !important; }
+}
+
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}

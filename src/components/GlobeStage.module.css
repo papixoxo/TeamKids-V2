@@ -1,0 +1,73 @@
+.stage {
+  position: relative;
+  background:
+    radial-gradient(70% 50% at 70% 35%, rgba(60, 34, 12, 0.45), transparent 60%),
+    radial-gradient(80% 70% at 20% 90%, rgba(28, 30, 54, 0.4), transparent 60%),
+    linear-gradient(180deg, #08070d, #0a0911 60%, #08070d);
+}
+
+/* the globe sticks while the story steps scroll past it */
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  z-index: 0;
+}
+.canvas { position: absolute; inset: 0; touch-action: pan-y; }
+
+.hint {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+/* steps pulled up to overlay the sticky globe */
+.steps { position: relative; z-index: 2; margin-top: -100svh; pointer-events: none; }
+.step {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--gutter);
+}
+.hopeStep { align-items: center; }
+
+.card {
+  pointer-events: auto;
+  max-width: 440px;
+  padding: clamp(22px, 3vw, 34px);
+  border-radius: var(--radius-lg);
+  background: rgba(8, 7, 13, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.h1 { font-size: clamp(44px, 6vw, 86px); font-weight: 400; line-height: 0.98; letter-spacing: -0.025em; margin: 18px 0 0; }
+.lead { color: var(--text-2); font-size: clamp(15px, 1.3vw, 18px); margin: 22px 0 28px; line-height: 1.7; }
+.actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.pin { display: inline-block; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ember); }
+.region { font-size: clamp(34px, 4.4vw, 60px); font-weight: 400; line-height: 1; margin: 12px 0 0; }
+.bigstat { margin: 22px 0 0; font-size: clamp(15px, 1.3vw, 18px); color: var(--text-2); line-height: 1.5; }
+.bigstat strong { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(40px, 5vw, 66px); color: var(--amber); line-height: 1; margin-bottom: 6px; }
+.body { color: var(--text-2); font-size: clamp(15px, 1.25vw, 18px); margin: 20px 0 26px; line-height: 1.7; }
+
+@media (max-width: 820px) {
+  .step { justify-content: center; text-align: center; padding-top: 16vh; align-items: flex-start; }
+  .card { background: rgba(8, 7, 13, 0.62); max-width: 520px; }
+  .actions { justify-content: center; }
+  .pin { display: block; }
+}
+@media (max-width: 520px) {
+  .actions { flex-direction: column; align-items: stretch; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hint { display: none; }
+}
