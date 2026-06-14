@@ -3,6 +3,7 @@ import styles from './Footer.module.css'
 
 const NAV = [
   { href: '#map', label: 'The map' },
+  { href: '#meet', label: 'His story' },
   { href: '#voices', label: 'Voices' },
   { href: '#give', label: 'Give' },
 ]

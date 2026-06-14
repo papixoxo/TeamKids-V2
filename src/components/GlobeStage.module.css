@@ -3,7 +3,7 @@
   background:
     radial-gradient(70% 50% at 70% 35%, rgba(60, 34, 12, 0.45), transparent 60%),
     radial-gradient(80% 70% at 20% 90%, rgba(28, 30, 54, 0.4), transparent 60%),
-    linear-gradient(180deg, #08070d, #0a0911 60%, #08070d);
+    linear-gradient(180deg, #16131e, #181522 60%, #16131e);
 }
 
 /* the globe sticks while the story steps scroll past it */
@@ -15,6 +15,17 @@
   z-index: 0;
 }
 .canvas { position: absolute; inset: 0; touch-action: pan-y; }
+
+/* soft left scrim so copy reads cleanly over the globe — no boxy card */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(96deg, rgba(15, 12, 22, 0.96) 0%, rgba(15, 12, 22, 0.82) 30%, rgba(15, 12, 22, 0.42) 50%, transparent 67%),
+    linear-gradient(0deg, rgba(15, 12, 22, 0.5) 0%, transparent 24%);
+}
 
 .hint {
   position: absolute;
@@ -38,20 +49,39 @@
 }
 .hopeStep { align-items: center; }
 
-.card {
-  pointer-events: auto;
-  max-width: 440px;
-  padding: clamp(22px, 3vw, 34px);
-  border-radius: var(--radius-lg);
-  background: rgba(8, 7, 13, 0.46);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-}
+/* copy floats directly on the scrim — clean & editorial, no glass box */
+.card { pointer-events: auto; max-width: 460px; }
+.hero .card { max-width: 680px; }
 
-.h1 { font-size: clamp(44px, 6vw, 86px); font-weight: 400; line-height: 0.98; letter-spacing: -0.025em; margin: 18px 0 0; }
-.lead { color: var(--text-2); font-size: clamp(15px, 1.3vw, 18px); margin: 22px 0 28px; line-height: 1.7; }
+.h1 { font-size: clamp(46px, 6.4vw, 92px); font-weight: 400; line-height: 0.98; letter-spacing: -0.025em; margin: 18px 0 0; }
+.lead { color: var(--text-2); font-size: clamp(16px, 1.45vw, 20px); margin: 24px 0 30px; line-height: 1.7; max-width: 42ch; }
 .actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ---- kinetic hero entrance ---- */
+/* each headline line lives in an overflow mask; .lineInner wipes up from below.
+   the small padding/negative-margin pair keeps descenders (g, p) from clipping. */
+.line { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.lineInner { display: block; transform: translateY(110%); will-change: transform; }
+
+/* slow warm sheen sweeping across "So does hope." — brand amber→ember tones */
+.shimmer {
+  background: linear-gradient(105deg, var(--ember) 0%, var(--amber) 24%, var(--gold) 44%, #fff4e2 50%, var(--gold) 56%, var(--amber) 76%, var(--ember) 100%);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: heroSheen 6s var(--ease-io) infinite;
+}
+@keyframes heroSheen { 0% { background-position: 120% 0; } 100% { background-position: -120% 0; } }
+
+.fadeUp { opacity: 0; transform: translateY(16px); }
+.count { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lineInner { transform: none; }
+  .fadeUp { opacity: 1; transform: none; }
+  .shimmer { animation: none; }
+}
 
 .pin { display: inline-block; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ember); }
 .region { font-size: clamp(34px, 4.4vw, 60px); font-weight: 400; line-height: 1; margin: 12px 0 0; }
@@ -60,8 +90,13 @@
 .body { color: var(--text-2); font-size: clamp(15px, 1.25vw, 18px); margin: 20px 0 26px; line-height: 1.7; }
 
 @media (max-width: 820px) {
-  .step { justify-content: center; text-align: center; padding-top: 16vh; align-items: flex-start; }
-  .card { background: rgba(8, 7, 13, 0.62); max-width: 520px; }
+  .step { justify-content: center; text-align: center; padding-top: 15vh; align-items: flex-start; }
+  .card { max-width: 560px; }
+  .hero .card { max-width: 560px; }
+  /* centred copy over a centred globe → darken top & bottom instead of the left */
+  .scrim {
+    background: linear-gradient(180deg, rgba(15, 12, 22, 0.94) 0%, rgba(15, 12, 22, 0.58) 40%, rgba(15, 12, 22, 0.1) 60%, rgba(15, 12, 22, 0.55) 100%);
+  }
   .actions { justify-content: center; }
   .pin { display: block; }
 }

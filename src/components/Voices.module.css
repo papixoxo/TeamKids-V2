@@ -1,6 +1,6 @@
 .voices {
   padding: clamp(88px, 14vh, 170px) 0;
-  background: linear-gradient(180deg, #08070d 0%, #0c0b15 100%);
+  background: linear-gradient(180deg, #16131e 0%, #1d1928 100%);
   overflow: hidden;
 }
 .head { max-width: 900px; margin-bottom: clamp(40px, 6vh, 70px); }

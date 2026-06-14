@@ -4,6 +4,11 @@ import Cursor from './components/Cursor'
 import ScrollProgress from './components/ScrollProgress'
 import Nav from './components/Nav'
 import GlobeStage from './components/GlobeStage'
+import Meet from './components/Meet'
+import Journey from './components/Journey'
+import Payoff from './components/Payoff'
+import Campaign from './components/Campaign'
+import Impact from './components/Impact'
 import Voices from './components/Voices'
 import Give from './components/Give'
 import Footer from './components/Footer'
@@ -49,6 +54,11 @@ export default function App() {
       <Nav onDonate={() => openDonate()} />
       <main id="main">
         <GlobeStage started={ready} onDonate={() => openDonate()} />
+        <Campaign onDonate={openDonate} />
+        <Meet />
+        <Journey />
+        <Payoff onDonate={openDonate} />
+        <Impact />
         <Voices />
         <Give onDonate={openDonate} />
       </main>

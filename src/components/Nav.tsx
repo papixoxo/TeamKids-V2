@@ -4,6 +4,8 @@ import styles from './Nav.module.css'
 
 const LINKS = [
   { href: '#map', label: 'The map' },
+  { href: '#campaign', label: 'Live' },
+  { href: '#meet', label: 'His story' },
   { href: '#voices', label: 'Voices' },
   { href: '#give', label: 'Give' },
 ]

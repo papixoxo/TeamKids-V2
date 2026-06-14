@@ -1,0 +1,59 @@
+.journey {
+  position: relative;
+  background: linear-gradient(180deg, #16131e 0%, #1d1928 50%, #16131e 100%);
+}
+
+/* ---- desktop sticky reel ---- */
+.stage { position: relative; height: 100svh; overflow: hidden; }
+.embers { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
+.glow {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(46% 56% at 70% 50%, rgba(255, 140, 66, 0.22), transparent 62%);
+}
+
+.frames { position: absolute; inset: 0; z-index: 1; }
+.frame {
+  position: absolute; top: 50%; right: 7%; transform: translateY(-50%);
+  width: clamp(320px, 38vw, 540px); height: 78vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.frame img {
+  max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
+  filter: drop-shadow(0 50px 80px rgba(0, 0, 0, 0.6));
+  will-change: transform;
+}
+
+.caps {
+  position: absolute; z-index: 2; left: var(--gutter); top: 50%; transform: translateY(-50%);
+  width: min(440px, 42vw); height: 340px;
+}
+.cap { position: absolute; inset: 0; margin: 0; display: flex; flex-direction: column; justify-content: center; }
+.capTag { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-3); }
+.capTag b { color: var(--amber); font-family: var(--display); font-weight: 400; margin-right: 6px; }
+.cap h3 { font-size: clamp(34px, 4.4vw, 62px); font-weight: 400; line-height: 1.02; margin: 16px 0 0; }
+.cap p { color: var(--text-2); font-size: clamp(15px, 1.3vw, 19px); margin: 20px 0 0; line-height: 1.7; max-width: 40ch; }
+
+/* vertical route indicator */
+.route { position: absolute; z-index: 2; left: calc(var(--gutter) - 22px); top: 50%; transform: translateY(-50%); height: 220px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+.routeTrack { position: absolute; top: 6px; bottom: 6px; left: 50%; width: 2px; transform: translateX(-50%); background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.routeFill { position: absolute; inset: 0; background: linear-gradient(180deg, var(--amber), var(--gold)); transform: scaleY(0); transform-origin: top; }
+.routeDot { width: 9px; height: 9px; border-radius: 50%; background: var(--night-3); border: 1px solid rgba(255, 255, 255, 0.2); position: relative; z-index: 1; transition: background 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+.routeOn { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 12px rgba(242, 146, 46, 0.8); }
+
+/* ---- mobile stacked ---- */
+.mobile { display: none; }
+.beatM { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px; padding: clamp(60px, 10vh, 96px) var(--gutter); }
+.beatM img { width: min(70%, 300px); height: auto; filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6)); }
+.beatM h3 { font-size: clamp(28px, 7vw, 40px); font-weight: 400; margin-top: 8px; }
+.beatM p { color: var(--text-2); margin-top: 14px; line-height: 1.7; max-width: 44ch; margin-inline: auto; }
+.beatM .capTag { display: block; }
+
+@media (max-width: 820px) {
+  .stage { display: none; }
+  .mobile { display: block; }
+}
+/* reduced motion: skip the scrubbed reel, show the clean stacked beats */
+@media (prefers-reduced-motion: reduce) {
+  .stage { display: none; }
+  .mobile { display: block; }
+}

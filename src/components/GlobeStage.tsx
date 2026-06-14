@@ -19,6 +19,8 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
   const stage = useRef<HTMLElement>(null)
   const mount = useRef<HTMLDivElement>(null)
   const hint = useRef<HTMLDivElement>(null)
+  const heroCard = useRef<HTMLDivElement>(null)
+  const countRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     if (!started) return
@@ -47,10 +49,10 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
     camera.position.set(0, 0, 13)
     camera.lookAt(0, 0, 0)
 
-    const R = 3.2
+    const R = 2.5
     const world = new THREE.Group() // everything that spins
     // sit the globe right of the text on desktop, behind/centred on mobile
-    world.position.x = mobile ? 0 : 3.0
+    world.position.x = mobile ? 0 : 3.2
     world.position.y = mobile ? 0.3 : 0
     scene.add(world)
 
@@ -62,7 +64,7 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
     // ---- opaque inner sphere: gives the globe body + occludes far-side dots ----
     const inner = new THREE.Mesh(
       new THREE.SphereGeometry(R * 0.985, 48, 48),
-      new THREE.MeshBasicMaterial({ color: 0x0a0a16 }),
+      new THREE.MeshBasicMaterial({ color: 0x14111d }),
     )
     world.add(inner)
 
@@ -131,7 +133,7 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
       REGIONS.forEach((rg) => {
         const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: hotTex, color: 0xff5a3c, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }))
         s.position.copy(latLon(rg.lat, rg.lon, R * 1.01))
-        s.scale.setScalar(0.5)
+        s.scale.setScalar(R * 0.16)
         world.add(s); hotspots.push(s)
       })
 
@@ -182,17 +184,29 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
 
     function renderOnce() { renderer.render(scene, camera) }
 
-    // drag to spin
-    let dragging = false, px = 0, py = 0
+    // drag to spin + click a hotspot to focus its region
+    let dragging = false, px = 0, py = 0, moved = 0
     const dom = renderer.domElement
-    const down = (e: PointerEvent) => { dragging = true; px = e.clientX; py = e.clientY; view.autoRot = false; dom.setPointerCapture(e.pointerId) }
+    const ray = new THREE.Raycaster()
+    const ndc = new THREE.Vector2()
+    const down = (e: PointerEvent) => { dragging = true; px = e.clientX; py = e.clientY; moved = 0; view.autoRot = false; dom.setPointerCapture(e.pointerId) }
     const moveD = (e: PointerEvent) => {
       if (!dragging) return
+      moved += Math.abs(e.clientX - px) + Math.abs(e.clientY - py)
       view.tRotY += (e.clientX - px) * 0.006
       view.tRotX = THREE.MathUtils.clamp(view.tRotX + (e.clientY - py) * 0.006, -1.1, 1.1)
       px = e.clientX; py = e.clientY
     }
-    const up = () => { dragging = false }
+    const up = (e: PointerEvent) => {
+      dragging = false
+      if (moved > 6 || !hotspots.length) return
+      const r = dom.getBoundingClientRect()
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1)
+      ray.setFromCamera(ndc, camera)
+      const hit = ray.intersectObjects([...hotspots, inner])[0]
+      const idx = hit && hotspots.indexOf(hit.object as THREE.Sprite)
+      if (typeof idx === 'number' && idx >= 0) faceRegion(idx)
+    }
     if (!reduced) {
       dom.addEventListener('pointerdown', down)
       dom.addEventListener('pointermove', moveD)
@@ -220,8 +234,8 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
 
       hotspots.forEach((s, i) => {
         const on = view.active === i || view.hope
-        const base = on ? 0.85 : 0.42
-        s.scale.setScalar(base + Math.sin(t * 3 + i) * (on ? 0.22 : 0.08))
+        const base = on ? R * 0.26 : R * 0.14
+        s.scale.setScalar(base + Math.sin(t * 3 + i) * (on ? R * 0.08 : R * 0.03))
         ;(s.material as THREE.SpriteMaterial).opacity = on ? 1 : 0.5
       })
       arcs.forEach((arc, i) => {
@@ -230,7 +244,7 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
         const f = arc.frac < 0.001 ? 0 : arc.frac
         ;(arc.mesh.geometry as THREE.TubeGeometry).setDrawRange(0, Math.floor(arc.count * f))
         if (f > 0.02 && f < 0.995) {
-          arc.head.position.copy(arc.curve.getPoint(f)); arc.head.scale.setScalar(0.34)
+          arc.head.position.copy(arc.curve.getPoint(f)); arc.head.scale.setScalar(R * 0.12)
         } else arc.head.scale.setScalar(0)
       })
       ;(atmo.material as THREE.ShaderMaterial).uniforms.uColor.value.lerp(new THREE.Color(view.hope ? 0xffd9a0 : 0xf2922e), 0.04)
@@ -254,7 +268,7 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
             else faceRegion(ri)
           },
         })
-        if (!reduced) {
+        if (!reduced && kind !== 'hero') {
           gsap.fromTo(step.querySelector(`.${styles.card}`), { opacity: 0, y: 40 }, {
             opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
             scrollTrigger: { trigger: step, start: 'top 70%', end: 'bottom 40%', toggleActions: 'play reverse play reverse' },
@@ -284,23 +298,58 @@ export default function GlobeStage({ started, onDonate }: { started: boolean; on
     }
   }, [started])
 
+  // ---- kinetic hero entrance: headline lines wipe up, copy cascades in, the
+  // 733M stat counts up. Plays as the preloader lifts. CSS holds the final
+  // state for reduced-motion users, so we just bail here. ----
+  useEffect(() => {
+    if (!started) return
+    const card = heroCard.current
+    if (!card || prefersReducedMotion()) return
+
+    const ctx = gsap.context(() => {
+      const lines = card.querySelectorAll(`.${styles.lineInner}`)
+      const fades = card.querySelectorAll(`.${styles.fadeUp}`)
+      const tl = gsap.timeline({ delay: 0.15, defaults: { ease: 'power4.out' } })
+      // animate plain `y`: the CSS `translateY(110%)` initial state resolves to a
+      // px matrix gsap reads back correctly as y — `yPercent` can't survive that.
+      tl.to(lines, { y: 0, duration: 1.0, stagger: 0.12 }, 0)
+        .to(fades, { opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out' }, 0.25)
+
+      const cnt = countRef.current
+      if (cnt) {
+        cnt.textContent = '0'
+        const n = { v: 0 }
+        tl.to(n, {
+          v: 733, duration: 1.6, ease: 'power2.out',
+          onUpdate: () => { cnt.textContent = Math.round(n.v).toString() },
+        }, 0.3)
+      }
+    }, card)
+    return () => ctx.revert()
+  }, [started])
+
   return (
     <section className={styles.stage} id="map" ref={stage} aria-label="The map of hunger">
       <div className={styles.sticky}>
         <div className={styles.canvas} ref={mount} />
+        <div className={styles.scrim} aria-hidden="true" />
         <div className={styles.hint} ref={hint}>drag to spin · scroll to travel</div>
       </div>
 
       <div className={styles.steps}>
         <div className={`${styles.step} ${styles.hero}`} data-step="hero" id="top">
-          <div className={styles.card}>
-            <p className="eyebrow">TeamKids · The map of hunger</p>
-            <h1 className={styles.h1}>Hunger has<br /> a map.<br /> <span className="text-amber">So does hope.</span></h1>
-            <p className={styles.lead}>
-              Right now, 733 million people don’t know where their next meal comes from.
-              Spin the planet. Find them. Then help us light their corner of it.
+          <div className={styles.card} ref={heroCard}>
+            <p className={`eyebrow ${styles.fadeUp}`}>TeamKids · The map of hunger</p>
+            <h1 className={styles.h1}>
+              <span className={styles.line}><span className={styles.lineInner}>Hunger has</span></span>
+              <span className={styles.line}><span className={styles.lineInner}>a map.</span></span>
+              <span className={styles.line}><span className={`${styles.lineInner} ${styles.shimmer}`}>So does hope.</span></span>
+            </h1>
+            <p className={`${styles.lead} ${styles.fadeUp}`}>
+              Right now, <span className={styles.count} ref={countRef}>733</span> million people don’t know where their
+              next meal comes from. Spin the planet. Find them. Then help us light their corner of it.
             </p>
-            <div className={styles.actions}>
+            <div className={`${styles.actions} ${styles.fadeUp}`}>
               <button className="btn btn--primary" data-magnetic onClick={() => onDonate()}>Light a region</button>
               <a className="btn btn--ghost" data-magnetic href="#give" onClick={(e) => { e.preventDefault(); scrollTo('#give') }}>How it works</a>
             </div>

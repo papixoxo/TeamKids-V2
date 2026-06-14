@@ -6,10 +6,10 @@
 
 :root {
   /* ---- The night (cold, the problem) ---- */
-  --night: #08070d;
-  --night-1: #0c0b15;
-  --night-2: #13111f;
-  --night-3: #1b1828;
+  --night: #16131e;
+  --night-1: #1d1928;
+  --night-2: #231e2f;
+  --night-3: #2a2438;
   --line: rgba(255, 255, 255, 0.09);
 
   /* ---- The warmth (hope, the brand) ---- */

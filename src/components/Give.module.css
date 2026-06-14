@@ -1,7 +1,7 @@
 .give {
   position: relative;
-  padding: clamp(88px, 14vh, 180px) 0;
-  background: linear-gradient(180deg, #0c0b15 0%, #1a1210 62%, #0e0a0e 100%);
+  padding: clamp(88px, 14vh, 180px) 0 clamp(56px, 8vh, 96px);
+  background: linear-gradient(180deg, #1d1928 0%, #281d17 62%, #1c1723 100%);
   overflow: hidden;
 }
 .glow {

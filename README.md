@@ -9,18 +9,28 @@ glowing arcs of aid toward them — before asking you to light one yourself.
 > Here the hero, the storytelling mechanic, and every section are built around a
 > procedural dot-globe — no drone/box/truck art at all.
 
-## The experience
-- **Sticky dot-globe** (three.js): continents are ~13k points sampled from a land
-  mask, wrapped in a fresnel atmosphere glow, with pulsing hunger hotspots.
-- **Scrollytelling**: the globe is pinned (CSS `sticky`) while story "steps"
-  scroll past. Each step rotates the planet to a region (Sahel, Horn of Africa,
-  Yemen, Afghanistan), brightens its hotspot, and **draws an aid-arc** from a hub
-  with a travelling comet-head — while a card reveals that region's story + stat.
-- **Drag to spin**: pointer-drag rotates the globe; it auto-rotates when idle.
-- **Voices**: an infinite auto-scrolling marquee of creator ambassadors
-  (grayscale → colour on hover), not tilt-cards.
-- **Give**: bold amount-tier cards (no slider), each opening the donate modal.
-- A final "light the whole map" beat lights every arc at once.
+## The story (top to bottom)
+1. **The map** — a sticky dot-globe (three.js, ~13k land points from a mask) with
+   a fresnel atmosphere and pulsing hunger hotspots. **Drag to spin**; scrolling
+   rotates it region to region (Sahel, Horn of Africa, Yemen, Afghanistan),
+   brightening each hotspot and **drawing an aid-arc** from a hub with a
+   travelling comet-head while a card tells that region's story.
+2. **Meet Amara** — the camera leaves the map for one face. The child render
+   appears cold and desaturated; emotional copy ends on a cliff-hanger: "Unless —".
+3. **The journey of your gift** — a pinned, cross-dissolving cinematic reel with
+   procedural ember particles: **drone → truck → food box** (all four renders),
+   each a beat of where your gift goes the night you give.
+4. **Tonight, she eats** — the payoff: the *same* child render, now warm and
+   radiant, with a breathing halo and rising embers. The emotional climax + CTA.
+5. **Impact** — count-up proof ("Amara is one of millions").
+6. **Voices** — an infinite marquee of creator ambassadors (grayscale → colour).
+7. **Give** — bold amount-tier cards, each opening the donate modal.
+8. **Footer** — final call to action.
+
+Every supplied asset is used (globe mask, drone, truck, food, child ×2, logo,
+four ambassadors). New visuals are generated procedurally — the dot-globe, a
+canvas ember field in the journey, CSS embers in the payoff, and an SVG route
+indicator — so nothing feels sparse.
 
 ## Stack
 - **Vite + React 18 + TypeScript** (ESM, strict)
@@ -52,6 +62,8 @@ src/
   components/
     Preloader, Cursor, ScrollProgress, Nav,
     GlobeStage (three.js globe + scrollytelling),
+    Meet (Amara, cold), Journey (pinned cross-dissolve reel),
+    Payoff (Amara, warm), Impact (count-ups),
     Voices (marquee), Give (tiers), DonateModal, Footer
 public/assets/
   earth-mask.png        land/sea mask the globe samples for dot placement

@@ -1,7 +1,7 @@
 .footer {
   position: relative;
-  background: linear-gradient(180deg, #100b0d 0%, #08070d 100%);
-  padding: clamp(72px, 12vh, 140px) 0 40px;
+  background: linear-gradient(180deg, #1f1822 0%, #16131e 100%);
+  padding: clamp(56px, 8vh, 92px) 0 36px;
   overflow: hidden;
   border-top: 1px solid var(--line);
 }
@@ -22,7 +22,6 @@
   justify-content: space-between;
   gap: 32px;
   flex-wrap: wrap;
-  padding-bottom: clamp(48px, 8vh, 80px);
   border-bottom: 1px solid var(--line);
 }
 .cta { font-size: clamp(26px, 3.6vw, 48px); font-weight: 400; line-height: 1.1; max-width: 18ch; }
@@ -32,7 +31,16 @@
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr;
   gap: 40px;
-  padding: clamp(48px, 7vh, 72px) 0;
+}
+
+/* These rows also carry the global .wrap utility, whose `padding: 0 gutter`
+   shorthand zeroes vertical padding at equal specificity. Scope to `.footer .x`
+   (two classes) so the spacing around the divider actually wins — using longhand
+   so .wrap still supplies the horizontal gutter. */
+.footer .top { padding-bottom: clamp(36px, 5vh, 56px); }
+.footer .grid {
+  padding-top: clamp(36px, 5vh, 56px);
+  padding-bottom: clamp(40px, 6vh, 64px);
 }
 .brand .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 20px; }
 .brand .logo b { color: var(--amber); }
